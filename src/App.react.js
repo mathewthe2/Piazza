@@ -16,6 +16,9 @@ import {
 } from "./pages";
 
 import HomePage from "./HomePage.react";
+import ReviewsPage from "./interface/ReviewsPage.react";
+import AnalyticsPage from './interface/AnalyticsPage.react';
+import GuestsPage from './interface/GuestsPage.react';
 import FormElementsPage from "./FormElementsPage.react";
 import PricingCardsPage from "./interface/PricingCardsPage.react";
 import CardsDesignPage from "./interface/CardsDesignPage.react";
@@ -27,6 +30,7 @@ import MapCardsPage from "./components/MapCardsPage.react";
 import BlogPage from "./components/BlogPage.react";
 
 import "tabler-react/dist/Tabler.css";
+import "react-bootstrap-modal/lib/css/rbm-complete.css";
 
 type Props = {||};
 
@@ -42,6 +46,9 @@ function App(props: Props): React.Node {
           <Route exact path="/404" component={Error404} />
           <Route exact path="/500" component={Error500} />
           <Route exact path="/503" component={Error503} />
+          <Route exact path="/reviews" component={ReviewsPage} />
+          <Route exact path="/analytics" component={AnalyticsPage} />
+          <Route exact path="/guests" component={GuestsPage} />
           <Route exact path="/blog" component={BlogPage} />
           <Route exact path="/cards" component={CardsDesignPage} />
           <Route exact path="/charts" component={ChartsPage} />

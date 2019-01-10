@@ -3,3 +3,7 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.modal-dialog {
+  box-shadow: 0 5px 15px rgba(0,0,0,.5)
+}

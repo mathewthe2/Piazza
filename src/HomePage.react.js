@@ -31,18 +31,10 @@ function Home() {
       <Page.Content title="Dashboard">
         <Grid.Row cards={true}>
           <Grid.Col width={6} sm={4} lg={2}>
-            <StatsCard layout={1} movement={6} total="43" label="New Tickets" />
+            <StatsCard layout={1} movement={6} total="43" label="Invites this month" />
           </Grid.Col>
           <Grid.Col width={6} sm={4} lg={2}>
-            <StatsCard
-              layout={1}
-              movement={-3}
-              total="17"
-              label="Closed Today"
-            />
-          </Grid.Col>
-          <Grid.Col width={6} sm={4} lg={2}>
-            <StatsCard layout={1} movement={9} total="7" label="New Replies" />
+            <StatsCard layout={1} movement={9} total="7" label="Reviews this month" />
           </Grid.Col>
           <Grid.Col width={6} sm={4} lg={2}>
             <StatsCard
@@ -329,10 +321,10 @@ function Home() {
               </Grid.Col>
               <Grid.Col sm={6}>
                 <ProgressCard
-                  header="New feedback"
-                  content="62"
+                  header="Overall Rating"
+                  content="4.5"
                   progressColor="red"
-                  progressWidth={28}
+                  progressWidth={4.5/5*100}
                 />
               </Grid.Col>
               <Grid.Col sm={6}>
@@ -365,7 +357,7 @@ function Home() {
               footer={"12 waiting payments"}
             />
           </Grid.Col>
-          <Grid.Col sm={6} lg={3}>
+          <Grid.Col sm={6} lg={6}>
             <StampCard
               color="green"
               icon="shopping-cart"

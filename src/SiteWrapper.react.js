@@ -34,6 +34,9 @@ type navItem = {|
 
 const navBarItems: Array<navItem> = [
   { value: "Home", to: "/", icon: "home", LinkComponent: withRouter(NavLink) },
+  { value: "Analytics", to: "/analytics", icon: "bar-chart", LinkComponent: withRouter(NavLink) },
+  { value: "Reviews", to: "/reviews", icon: "star", LinkComponent: withRouter(NavLink) },
+  { value: "Guests", to: "/guests", icon: "user", LinkComponent: withRouter(NavLink) },
   {
     value: "Interface",
     icon: "box",
@@ -103,15 +106,7 @@ const navBarItems: Array<navItem> = [
     to: "/gallery",
     icon: "image",
     LinkComponent: withRouter(NavLink),
-  },
-  {
-    icon: "file-text",
-    value: "Documentation",
-    to:
-      process.env.NODE_ENV === "production"
-        ? "https://tabler.github.io/tabler-react/documentation"
-        : "/documentation",
-  },
+  }
 ];
 
 const notificationsObjects = [
