@@ -1,0 +1,52 @@
+Arguments: 
+  /usr/local/Cellar/node/8.4.0/bin/node /usr/local/bin/yarn install
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands
+
+Yarn version: 
+  1.10.1
+
+Node version: 
+  8.4.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/cheerio: ETIMEDOUT
+      at Timeout._onTimeout (/usr/local/lib/node_modules/yarn/lib/cli.js:120826:19)
+      at ontimeout (timers.js:469:11)
+      at tryOnTimeout (timers.js:304:5)
+      at Timer.listOnTimeout (timers.js:264:5)
+
+npm manifest: 
+  {
+    "name": "panda-server",
+    "version": "1.0.0",
+    "main": "server.js",
+    "license": "MIT",
+    "scripts": {
+      "client": "cd client && yarn start",
+      "server": "nodemon server.js",
+      "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+      "start": "node server.js",
+      "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
+    },
+    "dependencies": {
+      "cheerio": "^1.0.0-rc.2",
+      "express": "^4.16.3",
+      "mongoose": "^5.2.12",
+      "request": "^2.88.0",
+      "socket.io": "^2.1.1"
+    },
+    "devDependencies": {
+      "concurrently": "^3.5.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

@@ -1,42 +1,23 @@
 {
-  "name": "tabler-react-example",
-  "homepage": "https://jonthomp.github.io/tabler-react",
-  "version": "0.0.0",
-  "private": true,
+  "name": "piazza",
+  "version": "1.0.0",
+  "main": "server.js",
   "license": "MIT",
-  "dependencies": {
-    "bootstrap": "^3.4.0",
-    "d3-scale": "^2.0.0",
-    "formik": "^1.0.2",
-    "moment": "^2.23.0",
-    "prop-types": "^15.6.1",
-    "react": "^16.2.0",
-    "react-autocomplete": "^1.8.1",
-    "react-bootstrap": "^0.32.4",
-    "react-bootstrap-modal": "^4.2.0",
-    "react-c3js": "^0.1.20",
-    "react-dom": "^16.2.0",
-    "react-google-maps": "^9.4.5",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.0.3",
-    "react-simple-maps": "^0.12.0",
-    "react-syntax-highlighter": "^9.0.0",
-    "tabler-react": "^1.21.3"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "watch": "react-scripts start --watch",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "client": "cd client && yarn start",
+    "server": "nodemon server.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "start": "node server.js",
+    "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
-  "devDependencies": {},
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.12",
+    "request": "^2.88.0",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {
+    "concurrently": "^3.5.0"
+  }
 }
