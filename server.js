@@ -18,7 +18,7 @@ const routes = require('./routes');
 
 //Set up default mongoose connection
 //var mongoDB = 'mongodb+srv://application:applicat10n@cluster0-zcfaz.gcp.mongodb.net/test?retryWrites=true';
-var mongoDB = 'mongodb://admin:passw0rd@ds137256.mlab.com:37256/pandatrip';
+var mongoDB = 'mongodb+srv://admin:XNXwjcnehHIkQWos@cluster0-zmnfl.azure.mongodb.net/test?retryWrites=true';
 mongoose.connect(mongoDB , { useNewUrlParser: true });
 // Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;
