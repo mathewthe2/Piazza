@@ -2,25 +2,80 @@
 
 import * as React from "react";
 
-import { Page, Grid, Button, Card, Table, Icon, Avatar } from "tabler-react";
+import { Page, Grid, Button, Card, Table, Icon, Avatar, Alert } from "tabler-react";
+import moment from 'moment';
+import swal from 'sweetalert';
 import SiteWrapper from "../SiteWrapper.react";
 import Modal from "react-bootstrap-modal";
 import GuestsForm from "../components/GuestsForm.react";
 import InvitationForm from "../components/InvitationForm.react";
 
+
+class Guest extends React.PureComponent<Props, void> {
+  render() {
+    const {guest, openInviteDialog} = this.props;
+    const confirmDelete = () => swal({
+      title: "Are you sure?",
+      text: `Are you sure that you want to remove ${guest.name}?`,
+      icon: "warning",
+      dangerMode: true,
+    })
+    .then(willDelete => {
+      if (willDelete) {
+        swal("Deleted!", "Your guest is removed", "success");
+      }
+    });
+    return (
+      <Table.Row>
+      <Table.Col className="w-1">
+        <Avatar imageURL={guest.avatar} />
+      </Table.Col>
+      <Table.Col>{guest.name}</Table.Col>
+      <Table.Col>
+        <Icon onClick={openInviteDialog} link={true} name="send" />
+      </Table.Col>
+      <Table.Col className="text-nowrap">{moment(guest.checkOut).fromNow()}</Table.Col>
+      <Table.Col className="w-1">
+        <Icon link={true} onClick={confirmDelete} name="trash" />
+      </Table.Col>
+    </Table.Row>
+    )
+  }
+}
+
 class GuestsPage extends React.PureComponent<Props, State> {
   state = {
-    inviteDialogOpen: true,
+    inviteDialogOpen: false,
     addGuestDialogOpen: false,
+    guests: [],
+    addedGuest: false,
+    newGuest: {},
+  };
+  componentDidMount() {
+    this.getReviews().then(res=>this.setState({guests: res}));
+  }
+  getReviews = async () => {
+    const response = await fetch('/guest');
+    const body = await response.json();
+    if (response.status !== 200) {
+      throw Error(body.message) 
+    }
+    return body;
   };
   openInviteDialog = () => this.setState({inviteDialogOpen: true});
   closeInviteDialog = () => this.setState({inviteDialogOpen: false});
   openAddGuestDialog = () => this.setState({addGuestDialogOpen: true});
-  closeAddGuestDialog = () => this.setState({addGuestDialogOpen: false});
+  closeAddGuestDialog = () => this.setState({addGuestDialogOpen: false, newGuest: {}});
+  updateGuest = newGuest => this.setState({newGuest});
   render() {
     return (
       <SiteWrapper>
         <Page.Content title="Guests">
+        {this.state.addedGuest &&
+          <Alert type="success" icon="check">
+          The guest has been added.
+          </Alert>
+        }
         <Card>
           <Card.Header>
             <Card.Options>
@@ -47,19 +102,9 @@ class GuestsPage extends React.PureComponent<Props, State> {
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
-                    <Table.Row>
-                      <Table.Col className="w-1">
-                        <Avatar imageURL="./demo/faces/male/9.jpg" />
-                      </Table.Col>
-                      <Table.Col>Ronald Bradley</Table.Col>
-                      <Table.Col>
-                        <Icon onClick={this.openInviteDialog} link={true} name="send" />
-                      </Table.Col>
-                      <Table.Col className="text-nowrap">May 6, 2018</Table.Col>
-                      <Table.Col className="w-1">
-                        <Icon link={true} name="trash" />
-                      </Table.Col>
-                    </Table.Row>
+                    {this.state.guests.map((guest, index)=>
+                      <Guest key={`guest ${index}`} guest={guest} openInviteDialog={this.openInviteDialog} />
+                    )}
                   </Table.Body>
                 </Table>
         </Card>
@@ -88,11 +133,11 @@ class GuestsPage extends React.PureComponent<Props, State> {
             <Modal.Title>Add Guest</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <GuestsForm />
+            <GuestsForm updateGuest={this.updateGuest} newGuest={this.state.newGuest} />
           </Modal.Body>
           <Modal.Footer>
             <Button color="secondary" onClick={this.closeAddGuestDialog}>Close</Button>
-            <Button color="primary" >Add Guest</Button>
+            <Button color="primary" onClick={()=>console.log(this.state.newGuest)}>Add Guest</Button>
           </Modal.Footer>
         </Modal>
         </Page.Content>

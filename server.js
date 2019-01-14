@@ -30,12 +30,6 @@ var userStatus = {};
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-var Payment = require('./schema/payment');
-var Booking = require('./schema/booking');
-var User = require('./schema/user');
-var Conversation = require('./schema/conversation');
-var Message = require('./schema/message');
-
 const getUserBySocket = socket => [...socketToUserIdMap.values()].find(k => k === socket);
 
 if (process.env.NODE_ENV === 'production') {

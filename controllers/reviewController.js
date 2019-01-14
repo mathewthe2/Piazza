@@ -1,8 +1,17 @@
 const $ = require('cheerio');
 const Nightmare = require('nightmare');
 const translate = require('@k3rn31p4nic/google-translate-api');
-const url = 'https://en.tripadvisor.com.hk/Hotel_Review-g294217-d1210756-Reviews-Hyatt_Regency_Hong_Kong_Tsim_Sha_Tsui-Hong_Kong.html';
+const url = 'https://www.tripadvisor.com/Hotel_Review-g294217-d302173-Reviews-or20-Regal_Airport_Hotel-Hong_Kong.html';
+//const url = 'https://en.tripadvisor.com.hk/Hotel_Review-g294217-d1210756-Reviews-Hyatt_Regency_Hong_Kong_Tsim_Sha_Tsui-Hong_Kong.html';
 // Defining all methods and business logic for routes
+
+const getDianPingReviews = async() => {
+	const nightmare = Nightmare();
+	return nightmare
+		.goto('http://www.dianping.com/shop/23501292')
+		.evaluate(() => document.querySelector('body').outerHTML)
+		.then(html => console.log(html));
+}
 
 const getReviews = async() => {
 	const nightmare = Nightmare();
@@ -29,6 +38,13 @@ const translateReview = async(text) => {
 }
 
 module.exports = {
+	findDianPingReviews: function(req, res) {
+		getDianPingReviews();
+		return res.json({
+			length: 0,
+			reviews: {}
+		});
+	},
 	findAll: function(req, res) {
 		getReviews().then(reviews=>{
 			const reviewObjects = reviews.toArray().map(r=>{

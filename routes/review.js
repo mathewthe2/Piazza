@@ -5,4 +5,8 @@ router
 	.route('/')
 	.get(reviewController.findAll)
 
+router
+	.route('/dianping')
+	.get(reviewController.findDianPingReviews)
+
 module.exports = router;

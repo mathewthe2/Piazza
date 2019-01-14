@@ -156,7 +156,7 @@ const Review = (review) => (
         </span>
         {moment(review.date).fromNow()}
       </div>
-      {review.translation && <button style={{marginLeft: 42}}>Google Translate</button>}
+      {review.translation && <Button style={{marginLeft: 42}}>Google Translate</Button>}
       <Dotdotdot clamp={4}>
         <p style={{marginLeft: 42, marginBottom: 0}}>
           {review.description}
