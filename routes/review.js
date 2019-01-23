@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const auth = require('./auth');
 const reviewController = require('../controllers/reviewController');
 
 router
@@ -7,6 +8,6 @@ router
 
 router
 	.route('/dianping')
-	.get(reviewController.findDianPingReviews)
+	.get(auth.required, reviewController.findDianPingReviews)
 
 module.exports = router;

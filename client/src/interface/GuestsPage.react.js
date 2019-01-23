@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { Page, Grid, Button, Card, Table, Icon, Avatar, Alert } from "tabler-react";
+import { Page, Form, Button, Card, Table, Icon, Avatar, Alert } from "tabler-react";
 import moment from 'moment';
 import swal from 'sweetalert';
 import SiteWrapper from "../SiteWrapper.react";
@@ -68,9 +68,22 @@ class GuestsPage extends React.PureComponent<Props, State> {
   closeAddGuestDialog = () => this.setState({addGuestDialogOpen: false, newGuest: {}});
   updateGuest = newGuest => this.setState({newGuest});
   render() {
+    const options = (
+      <React.Fragment>
+        <Form.Select className="w-auto mr-2">
+          <option value="asc">Newest</option>
+          <option value="desc">Oldest</option>
+        </Form.Select>
+        <Form.Input icon="search" placeholder="Search" />
+      </React.Fragment>
+    );
     return (
       <SiteWrapper>
-        <Page.Content title="Guests">
+        <Page.Content 
+          title="Guests" 
+          options={options} 
+          subTitle="1 - 10 of 172 guests" 
+        >
         {this.state.addedGuest &&
           <Alert type="success" icon="check">
           The guest has been added.

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { Grid, Button, Card, Form } from "tabler-react";
+import { Form } from "tabler-react";
 
 class InvitationForm extends React.PureComponent<Props, State> {
   state = {
@@ -10,8 +10,8 @@ class InvitationForm extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const {phone, email} = this.props;
-    const methodOfContact = phone ? phone : email; 
+    //const {phone, email} = this.props;
+    //const methodOfContact = phone ? phone : email; 
     return (
         <React.Fragment>
           <Form.Group label="Name">

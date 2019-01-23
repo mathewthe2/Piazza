@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const auth = require('./auth');
 const messageRoutes = require('./message');
 const userRoutes = require('./user');
 const guestRoutes = require('./guest');
@@ -8,6 +9,7 @@ const reviewRoutes = require('./review');
 const conversationRoutes = require('./conversation');
 const path = require('path');
 
+router.use('/auth', auth.router);
 router.use('/util', utilRoutes);
 router.use('/message', messageRoutes);
 router.use('/conversation', conversationRoutes);

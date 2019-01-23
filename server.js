@@ -1,20 +1,30 @@
 
-var express = require('express');
-var path = require('path');
-var http = require('http')
-var socketio = require('socket.io');
-var request = require("request");
-var cheerio = require("cheerio");
-var mongoose = require("mongoose");
+const express = require('express');
+const path = require('path');
+const http = require('http');
+const cors = require('cors');
+const socketio = require('socket.io');
+const request = require("request");
+const cheerio = require("cheerio");
+const mongoose = require("mongoose");
 
 const app = express();
 const port = process.env.PORT || 3001;
-const server = http.Server(app);
-const websocket = socketio(server);
 const routes = require('./routes');
 
-// Old chat
-// app.use(express.static('admin_page'));
+const passport = require('passport')
+const session = require('express-session')
+const passportInit = require('./lib/passport.init')
+const { SESSION_SECRET } = require('./lib/config')
+
+// const fs = require('fs')
+// const certOptions = {
+//   key: fs.readFileSync(path.resolve('certs/server.key')),
+//   cert: fs.readFileSync(path.resolve('certs/server.crt'))
+// }
+
+// const server = https.createServer(certOptions, app)
+const server = http.Server(app);
 
 //Set up default mongoose connection
 //var mongoDB = 'mongodb+srv://application:applicat10n@cluster0-zcfaz.gcp.mongodb.net/test?retryWrites=true';
@@ -31,6 +41,21 @@ var userStatus = {};
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 const getUserBySocket = socket => [...socketToUserIdMap.values()].find(k => k === socket);
+//app.use(cors());
+app.use(cors({
+  origin: 'http://www.localhost:3000'
+}))
+// Setup for passport 
+app.use(session({ 
+  secret: SESSION_SECRET, //process.env.SESSION_SECRET, 
+  resave: true, 
+  saveUninitialized: true,
+}))
+app.use(passport.initialize())
+passportInit()
+app.use(passport.session())
+
+
 
 if (process.env.NODE_ENV === 'production') {
   // Serve static files from the React frontend app
@@ -40,64 +65,16 @@ if (process.env.NODE_ENV === 'production') {
   //   res.sendFile(path.join(__dirname + '/client/build/index.html'))
   // })
 }
+// accept JSON objects
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(routes);
 
 
-
-
-
 server.listen(port, "0.0.0.0", () => console.log(`Listening on port ${port}`));
 
-// The event will be called when a client is connected.
-websocket.on('connection', (socket) => {
-  console.log('A client just joined on', socket.id);
-  websocket.to('admin').emit('update users', socket.id);
-
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-    const userId = getUserBySocket(socket.id);
-    userStatus[userId] = false;
-    websocket.to('admin').emit('update users', socket.id);
-  });
-
-  socket.on('reconnect', function() {
-    console.log('reconnect fired!');
-    websocket.to('admin').emit('update users', socket.id);
-  });
-
-  socket.on('requestId', () => {
-    new User({
-      name    : "",
-    }).save( function ( err, user, count ){
-      if( err ) return next( err );
-      console.log("new user", user);
-      const userId = user._id;
-      socket.emit('generateId', userId);
-      userStatus[userId] = true;
-      socketToUserIdMap.set(userId, socket.id);
-      socket.join(userId);
-    });
-  });
-
-  socket.on('registered user', (userId) => {
-    userStatus[userId] = true;
-    socketToUserIdMap.set(userId, socket.id);
-    socket.join(userId);
-  });
-
-  socket.on('chat message', function(msgObj){
-    if(msgObj.user.type === 'admin'){
-      websocket.to(msgObj.recipient).emit('chat message', msgObj);
-      websocket.to("admin").emit('chat message', msgObj);
-    } else {
-      websocket.to("admin").emit('chat message', msgObj);
-    }
-  });
-
-  socket.on('admin mounted', function(userId){
-    socket.join("admin");
-  });
-});
+// Connecting sockets to the server and adding them to the request 
+// so that we can access them later in the controller
+const io = socketio(server)
+app.set('io', io)

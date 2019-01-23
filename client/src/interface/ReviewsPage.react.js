@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { Page, Grid, Button, Card, Table, Icon, Avatar, Form, DropDown } from "tabler-react";
-import Autocomplete from 'react-autocomplete';
+import { Alert, Page, Grid, Button, Card, Table, Icon, Avatar, Form } from "tabler-react";
+//import Autocomplete from 'react-autocomplete';
 import Dotdotdot from 'react-dotdotdot';
 import moment from 'moment';
 import SiteWrapper from "../SiteWrapper.react";
@@ -18,6 +18,7 @@ const R = {
   "rating": "50",
   "date": "12 January 2019",
   "title": "Always excellent ",
+  "url": "http://en.tripadvisor.com.hk/ShowUserReviews-g294217-d11772135-r645929965-Hilton_Garden_Inn_Hong_Kong_Mongkok-Hong_Kong.html",
   "description": "I stayed in this Hyatt Regency property in downtown Kowloon for one night. You cant beat the location as it is located in Tsim Sha Tsui and you can go anywhere from the hotel conveniently because the subway station is below the hotel. There is also a big shopping mall, K11, that is directly connected to the hotel.Being a Gloablist the hotel treats you great - upgrade to a better room or suites (subject to availability), access to the Regency Club at 23/F for complimentary hot breakfast and evening cocktail. Wi-Fi is free and upgraded to premium service.My suites at 17/F is nice. It is not facing the Victoria Harbor directly but I do appreciate the upgrade. The suites is big and well equipped with coffee machine and different bathroom amentities. There is also a standalone shower and a separate bathtub.The regency club at 23/F has a nice view of the city and the harbor. The food is great and the service is above par. There is also a PC and a printer for one to use.There is a fitness room at 10/F that opens 24/7. Majority of the equipments are caloric based (there are many) but there are only limited weight equipment, dumbballs and yoga balls. Cold bottles of waters are provided that are nice touch!There is a bar and a restaurant inside the hotel but food is always not a problem when you are in the central downtown area."
   },
   {
@@ -68,18 +69,19 @@ const R = {
     body: JSON.stringify(body)
   });
 
-const menuStyle={
-  position: 'absolute', 
-  top: 52, 
-  left: -90,  
-  width: 'calc(100% - 48px)',
-  transform: 'translate3d(114px, 38px, 0px)', 
-  willChange: 'transform',
-  overflow: 'auto',
-  maxHeight: '50%',
-  };
-const parseSocial = source => {
+// const menuStyle={
+//   position: 'absolute', 
+//   top: 52, 
+//   left: -90,  
+//   width: 'calc(100% - 48px)',
+//   transform: 'translate3d(114px, 38px, 0px)', 
+//   willChange: 'transform',
+//   overflow: 'auto',
+//   maxHeight: '50%',
+//   };
+const parseSocial = ({source, url}) => {
   let src = null;
+  console.log('url?', url);
   switch (source) {
     case 'Google': {
       src = require("../data/social/googleg_48dp.png");
@@ -102,27 +104,15 @@ const parseSocial = source => {
   }
   return (
     <React.Fragment>
-      on <img src={src} height={14} width={14} style={{marginBottom: 4}} /> {source}
+      <img src={src} height={14} alt="icon" width={14} style={{marginBottom: 4, marginRight: 4}} /> 
+      {url ? 
+        <a href={url} target="_blank" rel="noopener">{source}</a>
+        : 
+        <span>{source}</span> 
+      }
     </React.Fragment>
   )
 }
-
-const TEST_REVIEWS = [
-  {
-    author: 'Becky',
-    source: 'Dianping',
-    stars: 4,
-    date: new Date(),
-    description: 'Good location. Nice hosts. This is going to asdfasdfasdfasdfasdfasdf2 asdfasdfasdf asdfasdf asdf asdf asdf asdf asdf 14f1f 4f  wef1 ef12ef '
-  },
-  {
-    author: 'Arthur',
-    source: 'TripAdvisor',
-    stars: 5,
-    date: new Date(),
-    description: 'Really nice experience.'
-  }
-]
 
 const data = [
   {displayValue: 'a'},
@@ -144,7 +134,7 @@ const Review = (review) => (
         <span style={{paddingRight: 3}}>
           <Icon key={index} prefix="fa" name="star-o" />
         </span>)}
-        <span style={{marginLeft: 12}}>{review.title && review.title}</span>
+        {/* <span style={{marginLeft: 12}}>{review.title && review.title}</span> */}
       </div>
    
       <div>
@@ -152,16 +142,31 @@ const Review = (review) => (
           {review.author}
         </span>
         <span style={{marginRight: 12}}>
-          {parseSocial(review.source)}
+          on {parseSocial({source:review.source, url: review.url})}
         </span>
         {moment(review.date).fromNow()}
       </div>
-      {review.translation && <Button style={{marginLeft: 42}}>Google Translate</Button>}
+      {review.title && 
+        <p style={{marginLeft: 42, marginTop: 12, fontStyle:'italic'}}>
+          {review.title}
+        </p>
+      }
       <Dotdotdot clamp={4}>
         <p style={{marginLeft: 42, marginBottom: 0}}>
           {review.description}
         </p>
-			</Dotdotdot> 
+			</Dotdotdot>
+      {review.translation && 
+        <div style={{marginLeft: 42}}>
+          <Button color="secondary" size="sm" outline >Google Translate</Button>
+        </div>} 
+      {review.response &&
+        <div style={{marginLeft: 42, marginTop: 12}}>
+          <Alert  type="secondary">
+            {review.response.description}
+          </Alert>
+        </div>
+      }
     </React.Fragment>
   </React.Fragment>
 )
@@ -172,7 +177,7 @@ class ReviewsPage extends React.PureComponent<Props, State> {
     reviews: R.reviews, // TODO: set to ''
   };
   componentDidMount() {
-    //this.getReviews().then(res=>this.setState({reviews:res.reviews}));
+    //this.getReviews().then(res=>this.setState({reviews:res.reviews}, ()=>this.setTranslation()));
     this.setTranslation();
   }
   setTranslation = () => {
@@ -217,19 +222,21 @@ class ReviewsPage extends React.PureComponent<Props, State> {
         date: moment(r.date).toDate(),
         description: r.description,
         title: r.title,
-        translation: r.translation
+        translation: r.translation,
+        response: r.response,
+        url: r.url
       }
     })
     return (
       <SiteWrapper>
-      <Page.Content title="Reviews">
+      <Page.Content title="Reviews" subTitle="1 - 5 of 70 reviews" >
         <Grid.Row>
-          <Grid.Col sm={6} lg={6}>
+          <Grid.Col md={9}>
           <Card>
             <Table className="card-table table-vcenter">
               <Table.Body>
                 {mappedReviews.map(review=>(
-                  <Table.Row>
+                  <Table.Row style={{marginBottom:12}}>
                     <Table.Col>
                       {Review(review)}
                     </Table.Col>
@@ -239,7 +246,7 @@ class ReviewsPage extends React.PureComponent<Props, State> {
             </Table>
           </Card>
           </Grid.Col>
-          <Grid.Col sm={6} lg={6}>
+          {/* <Grid.Col sm={6} lg={6}>
           <Card>
             <Card.Header>
               <Card.Title children="Review Invitation" />
@@ -289,7 +296,38 @@ class ReviewsPage extends React.PureComponent<Props, State> {
               </Form.Group>
             </Card.Body>
           </Card>
-          </Grid.Col>
+          </Grid.Col> */}
+          <Grid.Col md={3}>
+              <Card>
+                <Card.Body>
+                  <Form.Group label="Time Period">
+                  <Form.Select>
+                    <option>Last 30 Days</option>
+                    <option>Last 3 Months</option>
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group label="Review Source">
+                <Form.Checkbox
+                  checked
+                  name="example-radios"
+                  label={<span>{parseSocial({source: 'Google'})}</span>}
+                  value="option1"
+                />
+                <Form.Checkbox
+                name="example-radios"
+                label={<span>{parseSocial({source: 'TripAdvisor'})}</span>}
+                value="option1"
+                />      
+                <Form.Checkbox
+                  name="example-radios"
+                  label={<span>{parseSocial({source: 'Dianping'})}</span>}
+                  value="option1"
+                />
+                
+              </Form.Group>
+                </Card.Body>
+              </Card>
+            </Grid.Col>
         </Grid.Row>
       </Page.Content>
     </SiteWrapper>

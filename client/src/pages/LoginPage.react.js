@@ -2,11 +2,13 @@
 
 import * as React from "react";
 import { Formik } from "formik";
-import { LoginPage as TablerLoginPage } from "tabler-react";
-
+import { StandaloneFormPage, Form, Card } from "tabler-react";
+import OAuth from '../utils/OAuth';
+import socketIOClient from 'socket.io-client';
 type Props = {||};
 
 function LoginPage(props: Props): React.Node {
+  const socket = socketIOClient();
   return (
     <Formik
       initialValues={{
@@ -40,14 +42,21 @@ function LoginPage(props: Props): React.Node {
         handleSubmit,
         isSubmitting,
       }) => (
-        <TablerLoginPage
-          onSubmit={handleSubmit}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          values={values}
-          errors={errors}
-          touched={touched}
-        />
+        <React.Fragment>
+          <StandaloneFormPage>
+            <Form>
+              <Card>
+                <Card.Body>
+                  <OAuth 
+                  provider={'google'}
+                  key={'google'}
+                  socket={socket}
+                  />
+                </Card.Body>
+              </Card>
+            </Form>
+          </StandaloneFormPage>
+        </React.Fragment>
       )}
     />
   );
